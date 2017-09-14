@@ -1,0 +1,41 @@
+Destination Code,Line,Terminal ID,Station ID,Terminal Name
+K,BD,KIP,KIP,Kipling
+S,BD,ISL,ISL,Islington
+N,BD,JAN,JNE,Jane
+E,BD,KEL,KEL,Keele
+F,BD,OSS,OSS,Ossington
+C,BD,CHR,CHR,Christie
+L,BD,SGL,SGL,St. George Lower Level
+B,BD,BRD,BRD,Broadview
+H,BD,CHE,CHE,Chester
+G,BD,GWY,GWD,Greenwood Wye
+W,BD,WDB,WDB,Woodbine
+V,BD,VPK,VPK,Victoria Park
+R,BD,WAR,WAR,Warden
+J,BD,KEN,KEN,Kennedy
+W,SHEP,YIW,YIE,Yonge West
+Y,SHEP,YIE,YIE,Yonge East
+B,SHEP,BYV,BYV,Bayview
+M,SHEP,DML,DML,Don Mills
+H,YUS,VMC,VMC,Vaughan Metro Center
+O,YUS,PVL,PVL,Pioneer Village
+I,YUS,FIW,FIW,Finch West
+V,YUS,DWN,DWN,Downview
+W,YUS,WYD,WIL,Wilson Yard
+X,YUS,WIL,WIL,Wilson
+R,YUS,LWW,LWW,Lawrence West
+C,YUS,SCW,SCW,St. Clair West
+P,YUS,SPA,SPA,Spadina
+G,YUS,SGU,SGU,St. George
+Z,YUS,OSG,OSG,Osgoode
+A,YUS,STA,STA,St. Andrew
+U,YUS,UNI,UNI,Union
+B,YUS,BLO,BLO,Bloor
+M,YUS,DVV,DAV,Davisville Yard
+D,YUS,DAV,DAV,Davisville
+E,YUS,EGL,EGL,Eglinton
+L,YUS,LAW,LAW,Lawrence
+Y,YUS,YKM,LAW,York Mills
+S,YUS,SHP,SHP,Sheppard
+F,YUS,FIN,FIN,Finch
+T,YUS,FNS,FIN,Finch Storage Tracks

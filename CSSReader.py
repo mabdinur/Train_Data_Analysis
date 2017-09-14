@@ -1,51 +1,32 @@
 from datetime import datetime
 import csv
-
-
-class CSSData:
-    def __init__(self, liTraindata , x , trainNumPrev = "000", linePrev = "N/A", destCodePrev = "N/A"):
-        self.trainNum= int(liTraindata[x + 1])
-        self.line= chr(int(liTraindata[x + 2]))
-        self.destinCode=  chr(int(liTraindata[x + 3]))
-        self.trainClass= chr(int(liTraindata[x + 4]))
-        self.eventType= liTraindata[x + 5]
-        self.trackCircuit= liTraindata[ x + 6]
-
-        self.datetime= self.setdate(liTraindata[x + 7] + ":" + liTraindata[x + 8])
-        self.trainNumPrev= int(trainNumPrev)
-        self.linePrev= linePrev
-        self.destCodePrev = destCodePrev
-
-    def setdate(self, date):
-        return datetime.strptime(date, "%m/%d/%Y:%H:%M:%S")
-
-    def toString(self):
-        string = str(self.trainNum) + str(self.line) + str(self.destinCode) + str(self.trainClass) + str(self.eventType)\
-                 + str(self.trackCircuit) + str(self.datetime)
-        return string
-
-    def updatetoString(self):
-        string = self.toString() + str(self.trainNumPrev) + str(self.linePrev) + str(self.destCodePrev)
-        return string
-
+import TrackData
+from CSSData import CSSData
+from TrackData import TrackDataReader
+from Trip import Stop
+import csv
+from stationinfo import Station
+from stationinfo import stationinfo_reader
 
 class CSSReader:
     "Reads CSS and Store KEY data into this class"
     TrainData = list()
 
-    def __init__(self, path = "D:\\NTAS CSS\\ntas.css.log.08122017"):
-
+    def __init__(self, path = "NTAS CSS\\ntas.css.log.08122017"):
         cssData = self.__opencsv(path)
-        self.TrainData = self.__storeCSS(cssData, self.TrainData)
+        trackdataR = TrackDataReader()
+        trackinfo = trackdataR.dict_track_data
+        self.TrainData = self.__storeRevenueTrains(cssData, self.TrainData, trackinfo)              #self.__storeCSS(cssData, self.TrainData)
 
-    def __storeCSS(self, cssData, TrainData):
+    def __storeRevenueTrains(self, cssData, TrainData, dict_track_data):
+        destionation_dict = self.destination_dict()
         for x in range( len(cssData) ):
-            if ("cooking data" in cssData[x] ) and ( self.isRevenue( cssData[x + 4] , cssData[x + 5]) ):
-                if "update" in cssData[ x + 5]:
-                    CSSDataInfo = CSSData(cssData, x, cssData[x + 9], cssData[x + 10], cssData[x + 11])
-                    TrainData.append(CSSDataInfo)
-                else:
-                    CSSDataInfo = CSSData(cssData, x)
+            if ("cooking data" in cssData[x] ) and ( self.is_revenue( cssData[x + 4] , cssData[x + 5]) ):
+                if ("arrival" in cssData[ x + 5]) and ( cssData[ x + 6] in dict_track_data ):
+                    trackinfo = dict_track_data.get(cssData[ x + 6])
+                    destCode = chr(int(cssData[x + 3]))
+                    destinationID = (destionation_dict.get(destCode))
+                    CSSDataInfo = CSSData(cssData, x, destinationID, trackinfo)
                     TrainData.append(CSSDataInfo)
         return sorted(TrainData , key =lambda CSSData: CSSData.trainNum)
 
@@ -53,44 +34,72 @@ class CSSReader:
         cssData = [dataline.rstrip().rstrip('\.') for dataline in open(path, 'r')]
         return cssData
 
-    #Deprecated, List is way too large to be stored in 1 string
-    def trainDatatoString(self):
-        foo = 'start'
-        for i in self.TrainData:
-           foo =  foo + i.updatetoString() + '\n'
-        return foo
-
-    def trainDataPrint(self):
+    def train_data_print(self):
         for i in self.TrainData:
            print(i.updatetoString())
 
-    def isRevenue(self, trainClass, eventType):
+    def is_revenue(self, train_class, eventType):
 
         try:
-         trainClass = int(trainClass)
+         train_class = int(train_class)
         except:
             return False
 
         if "remove" in eventType:
             return False
-        elif  ( trainClass == ord("X") ) or ( trainClass == ord("S") ) or ( trainClass == ord("R") ) :
+        elif (train_class == ord("X")) or (train_class == ord("S")) or (train_class == ord("R")) :
             return True
         else:
             return False
 
+    def wrtie_cssdata_tocsv(self, writer):
+        for train in self.TrainData:
+            writer.writerow([train.trainNum, train.line, train.destinCode, train.train_class, train.eventType,
+                             train.trackCircuit, train.datetime, train.trainNumPrev, train.linePrev,
+                             train.destCodePrev, train.stationID])
 
-file = open("D:\\NTAS CSS\\data.csv", 'w' , newline= '')
-writer = csv.writer(file)
-writer.writerow(["Train Number", "Line", "Destination Code", "Train Class", "Event Type", "Track Circuit",
-                 "Date-time", "Previous Train Number", "Previous Line" , "Previous Destination Code"])
-moonTEST1 = CSSReader()
-moonTEST2 = CSSReader("D:\\NTAS CSS\\ntas.css.log.08132017")
+    def destination_dict(self, path="NTAS CSS//Destinations.csv"):
+        dict_dest = dict()
+        for dataline in open(path, 'r'):
+            data = dataline.split(',')
+            dest_ascii = data[0]
+            station_id = data[2]
+            dict_dest[dest_ascii] = station_id
+        return dict_dest
 
-for train in moonTEST1.TrainData:
-    writer.writerow([train.trainNum, train.line, train.destinCode, train.trainClass, train.eventType,
-                     train.trackCircuit, train.datetime, train.trainNumPrev, train.linePrev, train.destCodePrev] )
+    def identify_stops(self):
+        dict_stations = stationinfo_reader()
 
-for train in moonTEST2.TrainData:
-    writer.writerow([train.trainNum, train.line, train.destinCode, train.trainClass, train.eventType,
-                     train.trackCircuit, train.datetime, train.trainNumPrev, train.linePrev, train.destCodePrev] )
+        for i in range(len(self.TrainData) - 1):
+            currTrainNum = self.TrainData[i].trainNum
+            station = self.TrainData[i].stationID
+            nextTrainNum = self.TrainData[i + 1].trainNum
+            nextstation_actual = self.TrainData[i + 1].stationID
+            nextstation_route = dict_stations.get(station)
+
+            if(currTrainNum == nextTrainNum)and(nextstation_actual == nextstation_route.stationNext):
+                Stop(self.TrainData[i], self.TrainData[i + 1], nextstation_route.distance, currTrainNum )
+
+    def ___next_station_on_map(self, dict_stations, station):
+        if "BAY2" in station:
+            return dict_stations.get("BAU2")
+        else:
+            return dict_stations.get(station)
+
+
+        
+def createDataCSV ():
+    file = open("NTAS CSS\\data.csv", 'w' , newline= '')
+    writer = csv.writer(file)
+    writer.writerow(["Train Number", "Line", "Destination Code", "Train Class", "Event Type", "Track Circuit",
+                     "Date-time", "Previous Train Number", "Previous Line", "Previous Destination Code", "StationID"])
+    moonTEST1 = CSSReader()
+    moonTEST2 = CSSReader("NTAS CSS\\ntas.css.log.08132017")
+
+    moonTEST1.wrtie_cssdata_tocsv(writer)
+    moonTEST2.wrtie_cssdata_tocsv(writer)
+
+
+#createDataCSV()    #Create data file containtating extracted CSS information
+
 

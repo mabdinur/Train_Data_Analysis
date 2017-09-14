@@ -1,22 +1,13 @@
-import os
-import io
-from stationinfo import Station
+from CSSReader import CSSReader
+import csv
+from Trip import Stop
 
-def ttc_Station_Reader():
-    LiStation = list()
-    path = "D:\\NTAS CSS\\StationMap.csv"
+#Logfile_Aug8 = CSSReader()
+Logfile_Aug9 = CSSReader("NTAS CSS\\ntas.css.log.08132017")
+#Logfile_Aug8.identify_stops()
+Logfile_Aug9.identify_stops()
+#Stop.remove_duplicates()
+Stop.print_all_stop_data()
 
-    stationSpecs = [dataline.strip().split(',') for dataline in open(path, 'r')]
 
-    for line in stationSpecs:
-        isLastStation  = True if line[8] == 0 else False
-        NewStation = Station(line, isLastStation )
-        LiStation.append(NewStation)
 
-    return LiStation       #liCurrentStation
-
-def reader_test():
-   for x in ttc_Station_Reader():
-       x.print()
-
-reader_test()
