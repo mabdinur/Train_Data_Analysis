@@ -4,9 +4,10 @@
     <extensionMap>
       <mapping pattern="StationData" type="Python" />
       <mapping pattern="TrackData" type="Python" />
-      <mapping pattern="stationinfo" type="Python" />
-      <mapping pattern="CSSReader" type="Python" />
       <mapping pattern="TTC Station Reader" type="Python" />
+      <mapping pattern="CSSReader" type="Python" />
+      <mapping pattern="stationinfo" type="Python" />
+      <mapping pattern="stations" type="Python" />
     </extensionMap>
   </component>
 </application>
