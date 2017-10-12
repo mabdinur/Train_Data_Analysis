@@ -8,6 +8,7 @@
       <mapping pattern="stationinfo" type="Python" />
       <mapping pattern="CSSReader" type="Python" />
       <mapping pattern="TTC Station Reader" type="Python" />
+      <mapping pattern="ntas-logs" type="Python" />
       <mapping pattern="stations" type="Python" />
     </extensionMap>
   </component>
