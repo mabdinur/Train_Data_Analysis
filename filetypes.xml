@@ -3,15 +3,16 @@
     <ignoreFiles list="*$py.class;*.hprof;*.pyc;*.pyo;*.rbc;*.yarb;*~;.DS_Store;.git;.hg;.svn;CVS;__pycache__;_svn;vssver.scc;vssver2.scc;" />
     <extensionMap>
       <mapping ext="ini" type="PLAIN_TEXT" />
-      <mapping pattern="parse_html" type="Python" />
       <mapping pattern="StationData" type="Python" />
-      <mapping pattern="TrackData" type="Python" />
-      <mapping pattern="collect_data.py" type="Python" />
-      <mapping pattern="stationinfo" type="Python" />
-      <mapping pattern="CSSReader" type="Python" />
       <mapping pattern="TTC Station Reader" type="Python" />
-      <mapping pattern="ntas-logs" type="Python" />
+      <mapping pattern="TrackData" type="Python" />
       <mapping pattern="stations" type="Python" />
+      <mapping pattern="ntas-logs" type="Python" />
+      <mapping pattern="stationinfo" type="Python" />
+      <mapping pattern="stack_queues" type="Python" />
+      <mapping pattern="CSSReader" type="Python" />
+      <mapping pattern="collect_data.py" type="Python" />
+      <mapping pattern="parse_html" type="Python" />
     </extensionMap>
   </component>
 </application>
